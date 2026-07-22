@@ -1,0 +1,21 @@
+# Python / backend
+backend/venv/
+backend/__pycache__/
+**/__pycache__/
+*.pyc
+backend/chroma_db/
+backend/logs/
+.env
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# 3D assets (volumineux, gérés séparément)
+frontend/public/models/*.glb
+
+# Éditeurs / OS
+.vscode/
+.DS_Store
+Thumbs.db

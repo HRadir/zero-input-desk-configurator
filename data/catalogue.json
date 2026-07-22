@@ -1,0 +1,138 @@
+{
+  "finitions": [
+    {
+      "id": "finition_chene_clair",
+      "nom": "Chêne clair",
+      "couleur_hex": "#D8C39A",
+      "style_tags": ["scandinave", "minimaliste"]
+    },
+    {
+      "id": "finition_blanc",
+      "nom": "Blanc",
+      "couleur_hex": "#F2F2F0",
+      "style_tags": ["scandinave", "minimaliste", "moderne"]
+    },
+    {
+      "id": "finition_chene_fonce",
+      "nom": "Chêne foncé",
+      "couleur_hex": "#5C4530",
+      "style_tags": ["classique", "industriel"]
+    },
+    {
+      "id": "finition_noir_mat",
+      "nom": "Noir mat",
+      "couleur_hex": "#2B2B2B",
+      "style_tags": ["moderne", "industriel"]
+    },
+    {
+      "id": "finition_gris",
+      "nom": "Gris anthracite",
+      "couleur_hex": "#6E6E6E",
+      "style_tags": ["classique", "industriel"]
+    }
+  ],
+  "plateaux": [
+    {
+      "id": "plateau_standard",
+      "nom": "Plateau standard",
+      "materiau": "bois",
+      "largeurs_disponibles_cm": [120, 140, 160],
+      "profondeur_cm": 70,
+      "prix_eur": 210,
+      "style_tags": ["scandinave", "minimaliste", "moderne"]
+    },
+    {
+      "id": "plateau_large",
+      "nom": "Plateau large",
+      "materiau": "bois",
+      "largeurs_disponibles_cm": [160, 180, 200],
+      "profondeur_cm": 80,
+      "prix_eur": 260,
+      "style_tags": ["classique", "industriel"]
+    },
+    {
+      "id": "plateau_compact",
+      "nom": "Plateau compact",
+      "materiau": "stratifie",
+      "largeurs_disponibles_cm": [100, 120],
+      "profondeur_cm": 60,
+      "prix_eur": 180,
+      "style_tags": ["minimaliste"]
+    }
+  ],
+  "structures": [
+    {
+      "id": "structure_double_moteur",
+      "nom": "Structure double moteur",
+      "moteur": "double",
+      "hauteur_min_cm": 65,
+      "hauteur_max_cm": 125,
+      "charge_max_kg": 80,
+      "largeur_max_compatible_cm": 160,
+      "prix_eur": 350,
+      "style_tags": ["scandinave", "minimaliste", "moderne"]
+    },
+    {
+      "id": "structure_triple_moteur",
+      "nom": "Structure triple moteur",
+      "moteur": "triple",
+      "hauteur_min_cm": 62,
+      "hauteur_max_cm": 128,
+      "charge_max_kg": 120,
+      "largeur_max_compatible_cm": 200,
+      "prix_eur": 480,
+      "style_tags": ["classique", "industriel", "moderne"]
+    }
+  ],
+  "accessoires": [
+    {
+      "id": "bras_ecran_simple",
+      "nom": "Bras écran simple",
+      "type": "bras_ecran",
+      "prix_eur": 60,
+      "rendu_3d": false,
+      "prerequis": {}
+    },
+    {
+      "id": "bras_ecran_double",
+      "nom": "Bras écran double",
+      "type": "bras_ecran",
+      "prix_eur": 110,
+      "rendu_3d": false,
+      "prerequis": { "profondeur_plateau_min_cm": 70 }
+    },
+    {
+      "id": "passe_cable",
+      "nom": "Passe-câble intégré",
+      "type": "passe_cable",
+      "prix_eur": 25,
+      "rendu_3d": false,
+      "prerequis": {}
+    },
+    {
+      "id": "dock_usb",
+      "nom": "Dock USB-C intégré",
+      "type": "dock_usb",
+      "prix_eur": 90,
+      "rendu_3d": false,
+      "prerequis": { "accessoire_requis": "passe_cable" }
+    },
+    {
+      "id": "panneau_acoustique",
+      "nom": "Panneau acoustique frontal",
+      "type": "panneau_acoustique",
+      "prix_eur": 130,
+      "rendu_3d": false,
+      "prerequis": { "largeur_plateau_min_cm": 140 }
+    },
+    {
+      "id": "support_laptop",
+      "nom": "Support laptop relevé",
+      "type": "support_laptop",
+      "prix_eur": 45,
+      "rendu_3d": false,
+      "prerequis": {}
+    }
+  ],
+  "styles": ["scandinave", "industriel", "minimaliste", "moderne", "classique"]
+}

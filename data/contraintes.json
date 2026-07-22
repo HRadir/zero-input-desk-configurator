@@ -1,0 +1,67 @@
+{
+  "regles": [
+    {
+      "id": "largeur_min_selon_ecrans",
+      "type": "largeur_min_ecrans",
+      "description": "La largeur du plateau choisie doit être suffisante pour le nombre d'écrans déclaré.",
+      "severite": "erreur",
+      "seuils": {
+        "1": 100,
+        "2": 140,
+        "3": 180
+      }
+    },
+    {
+      "id": "moteur_triple_requis_si_largeur",
+      "type": "moteur_min_largeur",
+      "description": "Au-delà de 180 cm de largeur, la structure doit être équipée d'un triple moteur (double moteur insuffisant pour la stabilité).",
+      "severite": "erreur",
+      "largeur_seuil_cm": 180,
+      "moteur_requis": "triple"
+    },
+    {
+      "id": "structure_largeur_max_compatible",
+      "type": "largeur_max_structure",
+      "description": "La largeur du plateau ne doit pas dépasser la largeur maximale compatible de la structure choisie (champ largeur_max_compatible_cm de la structure).",
+      "severite": "erreur"
+    },
+    {
+      "id": "bras_double_profondeur_min",
+      "type": "accessoire_prerequis_dimension",
+      "description": "Le bras écran double nécessite un plateau d'au moins 70 cm de profondeur.",
+      "severite": "erreur",
+      "accessoire_id": "bras_ecran_double",
+      "dimension": "profondeur_cm",
+      "valeur_min": 70
+    },
+    {
+      "id": "panneau_acoustique_largeur_min",
+      "type": "accessoire_prerequis_dimension",
+      "description": "Le panneau acoustique frontal nécessite un plateau d'au moins 140 cm de largeur choisie.",
+      "severite": "erreur",
+      "accessoire_id": "panneau_acoustique",
+      "dimension": "largeur_choisie_cm",
+      "valeur_min": 140
+    },
+    {
+      "id": "dock_requiert_passe_cable",
+      "type": "accessoire_prerequis_accessoire",
+      "description": "Le dock USB-C intégré nécessite la présence du passe-câble intégré dans la configuration.",
+      "severite": "erreur",
+      "accessoire_id": "dock_usb",
+      "accessoire_requis_id": "passe_cable"
+    },
+    {
+      "id": "bras_ecran_correspond_nombre_ecrans",
+      "type": "coherence_accessoire_ecrans",
+      "description": "Le nombre de bras écran configurés (1 pour bras simple, 2 pour bras double) doit correspondre exactement au nombre d'écrans déclaré.",
+      "severite": "erreur"
+    },
+    {
+      "id": "finition_style_coherence",
+      "type": "coherence_style",
+      "description": "Si un style est demandé, la finition, le plateau et la structure choisis devraient partager ce tag de style (sinon, avertissement non bloquant avec suggestion d'alternative).",
+      "severite": "avertissement"
+    }
+  ]
+}

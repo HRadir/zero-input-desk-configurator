@@ -1,0 +1,63 @@
+.app-layout {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
+.viewer-pane {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.chat-pane {
+  flex: 0 0 360px;
+  border-left: 1px solid #2a2a2a;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.chat-placeholder {
+  opacity: 0.6;
+  font-size: 14px;
+}
+
+.debug-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.debug-panel h3 {
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.debug-panel label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.debug-panel select {
+  padding: 4px;
+}
+
+.debug-panel fieldset {
+  border: 1px solid #3a3a3a;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.debug-panel .checkbox-row {
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+
+.debug-error {
+  color: #d9534f;
+}
