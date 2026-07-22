@@ -71,6 +71,15 @@ export default function ChatPanel() {
         )}
       </div>
 
+      {lastValidation && lastValidation.errors.length > 0 && (
+        <div className="chat-errors">
+          <strong>Non résolu après plusieurs tentatives :</strong>
+          {lastValidation.errors.map((e, i) => (
+            <p key={i}>✕ {e.message}</p>
+          ))}
+        </div>
+      )}
+
       {lastValidation && lastValidation.warnings.length > 0 && (
         <div className="chat-warnings">
           {lastValidation.warnings.map((w, i) => (

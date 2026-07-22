@@ -52,7 +52,16 @@ export const useChatStore = create((set, get) => ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: trimmed, history, current_config: currentConfig }),
       })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      if (!res.ok) {
+        let detail = `HTTP ${res.status}`
+        try {
+          const errBody = await res.json()
+          if (errBody.detail) detail = errBody.detail
+        } catch {
+          // le corps n'était pas du JSON exploitable, on garde le detail par défaut
+        }
+        throw new Error(detail)
+      }
       const data = await res.json()
 
       useConfigStore.getState().setConfig(backendConfigToStoreConfig(data.config))
@@ -72,7 +81,7 @@ export const useChatStore = create((set, get) => ({
       set((state) => ({
         messages: [
           ...state.messages,
-          { role: 'assistant', content: `Erreur : impossible de générer la configuration (${err.message}).` },
+          { role: 'assistant', content: `⚠ ${err.message}` },
         ],
         error: err.message,
         loading: false,

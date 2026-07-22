@@ -9,6 +9,26 @@
   min-width: 0;
 }
 
+.viewer-error {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #d9534f;
+  text-align: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.viewer-error-detail {
+  font-size: 12px;
+  opacity: 0.7;
+  color: inherit;
+}
+
 .chat-pane {
   flex: 0 0 420px;
   border-left: 1px solid #2a2a2a;
@@ -78,6 +98,11 @@
 .chat-warnings {
   font-size: 12px;
   color: #d9a634;
+}
+
+.chat-errors {
+  font-size: 12px;
+  color: #d9534f;
 }
 
 .chat-input-row {

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import DeskViewer from './components/DeskViewer'
 import ChatPanel from './components/ChatPanel'
 import DebugPanel from './components/DebugPanel'
+import ErrorBoundary from './components/ErrorBoundary'
 import { useCatalogueStore } from './store/useCatalogueStore'
 import './App.css'
 
@@ -15,7 +16,9 @@ function App() {
   return (
     <div className="app-layout">
       <div className="viewer-pane">
-        <DeskViewer />
+        <ErrorBoundary>
+          <DeskViewer />
+        </ErrorBoundary>
       </div>
       <aside className="chat-pane">
         <ChatPanel />
