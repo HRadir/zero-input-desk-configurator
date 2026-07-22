@@ -7,6 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.constraints.engine import validate_config
 from app.constraints.models import DeskConfig
+from app.llm.generator import generate_valid_config
+from app.schemas.chat import ChatRequest
 
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 
@@ -41,3 +43,16 @@ def validate(payload: DeskConfig):
     contraintes = load_json("contraintes.json")
     result = validate_config(payload.model_dump(), catalogue, contraintes)
     return asdict(result)
+
+
+@app.post("/chat/generate")
+def chat_generate(payload: ChatRequest):
+    history = [{"role": m.role, "content": m.content} for m in payload.history]
+    config, result, attempts = generate_valid_config(
+        payload.message, history=history, current_config=payload.current_config
+    )
+    return {
+        "config": config.model_dump(),
+        "validation": asdict(result),
+        "attempts": attempts,
+    }
