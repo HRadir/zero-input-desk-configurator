@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import DeskViewer from './components/DeskViewer'
+import ChatPanel from './components/ChatPanel'
 import DebugPanel from './components/DebugPanel'
 import { useCatalogueStore } from './store/useCatalogueStore'
 import './App.css'
@@ -17,8 +18,8 @@ function App() {
         <DeskViewer />
       </div>
       <aside className="chat-pane">
+        <ChatPanel />
         <DebugPanel />
-        <p className="chat-placeholder">Le chat conversationnel arrivera en Phase 10.</p>
       </aside>
     </div>
   )
