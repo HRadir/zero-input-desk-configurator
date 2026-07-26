@@ -49,7 +49,7 @@ def validate(payload: DeskConfig):
 def chat_generate(payload: ChatRequest):
     history = [{"role": m.role, "content": m.content} for m in payload.history]
     try:
-        config, result, attempts = generate_valid_config(
+        config, message, result, attempts = generate_valid_config(
             payload.message, history=history, current_config=payload.current_config
         )
     except Exception as exc:
@@ -61,6 +61,7 @@ def chat_generate(payload: ChatRequest):
         ) from exc
     return {
         "config": config.model_dump(),
+        "message": message,
         "validation": asdict(result),
         "attempts": attempts,
     }

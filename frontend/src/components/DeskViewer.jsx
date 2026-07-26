@@ -9,7 +9,14 @@ import { useConfigStore } from '../store/useConfigStore'
 // en déplaçant tout le bureau en bloc plutôt que de télescoper les pieds individuellement.
 const STAND_OFFSET_Y = 0.12
 
-function Desk({ tintColor, standing }) {
+// Largeur/profondeur de référence (= config par défaut) servant de base à la mise à
+// l'échelle relative du mesh. Le GLB étant un mesh unique fusionné sans cotes réelles
+// connues en cm (cf. MODEL_NOTES.md), on approxime la largeur/profondeur choisies par un
+// facteur d'échelle relatif à cette référence plutôt qu'une conversion cm -> unités exacte.
+const REFERENCE_LARGEUR_CM = 140
+const REFERENCE_PROFONDEUR_CM = 70
+
+function Desk({ tintColor, standing, scaleX, scaleZ }) {
   const { scene } = useGLTF('/models/desk.glb')
   // clone(true) évite de muter le scene graph mis en cache par useGLTF (partagé entre instances/hot-reload).
   const clonedScene = useMemo(() => scene.clone(true), [scene])
@@ -33,10 +40,15 @@ function Desk({ tintColor, standing }) {
 
   useFrame((_, delta) => {
     if (!groupRef.current) return
-    const target = standing ? STAND_OFFSET_Y : 0
-    const current = groupRef.current.position.y
     const t = Math.min(delta * 4, 1)
-    groupRef.current.position.y = current + (target - current) * t
+
+    const targetY = standing ? STAND_OFFSET_Y : 0
+    const currentY = groupRef.current.position.y
+    groupRef.current.position.y = currentY + (targetY - currentY) * t
+
+    const currentScale = groupRef.current.scale
+    currentScale.x += (scaleX - currentScale.x) * t
+    currentScale.z += (scaleZ - currentScale.z) * t
   })
 
   return (
@@ -52,7 +64,10 @@ export default function DeskViewer() {
   const catalogue = useCatalogueStore((s) => s.data)
 
   const finition = catalogue?.finitions.find((f) => f.id === config.finitionId)
+  const plateau = catalogue?.plateaux.find((p) => p.id === config.plateauId)
   const tintColor = finition?.couleur_hex ?? '#ffffff'
+  const scaleX = config.largeurChoisieCm / REFERENCE_LARGEUR_CM
+  const scaleZ = (plateau?.profondeur_cm ?? REFERENCE_PROFONDEUR_CM) / REFERENCE_PROFONDEUR_CM
 
   return (
     <Canvas shadows camera={{ fov: 45, position: [3, 2.2, 4] }}>
@@ -60,8 +75,8 @@ export default function DeskViewer() {
       <ambientLight intensity={0.7} />
       <directionalLight position={[3, 5, 2]} intensity={1.2} castShadow />
       <Suspense fallback={null}>
-        <Bounds fit clip observe margin={1.4}>
-          <Desk tintColor={tintColor} standing={hauteurMode === 'debout'} />
+        <Bounds fit clip observe margin={1.8}>
+          <Desk tintColor={tintColor} standing={hauteurMode === 'debout'} scaleX={scaleX} scaleZ={scaleZ} />
         </Bounds>
         <Environment preset="city" />
         <ContactShadows position={[0, -0.001, 0]} opacity={0.35} scale={10} blur={2.5} far={2} />

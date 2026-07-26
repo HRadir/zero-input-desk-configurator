@@ -8,6 +8,7 @@ from langchain_openai import ChatOpenAI
 
 from app.constraints.engine import ValidationResult, validate_config
 from app.constraints.models import DeskConfig
+from app.llm.models import GenerationResult
 from app.llm.prompts import build_system_prompt
 from app.rag.retriever import retrieve_relevant_options
 
@@ -36,9 +37,9 @@ def _invoke_llm(
     current_config: Optional[dict],
     message: str,
     correction_note: Optional[str] = None,
-) -> DeskConfig:
+) -> GenerationResult:
     llm = ChatOpenAI(model=CHAT_MODEL, temperature=0)
-    structured_llm = llm.with_structured_output(DeskConfig)
+    structured_llm = llm.with_structured_output(GenerationResult)
 
     messages: list[tuple[str, str]] = [("system", system_prompt)]
     for turn in history:
@@ -63,9 +64,11 @@ def generate_valid_config(
     history: Optional[list[dict]] = None,
     current_config: Optional[dict] = None,
     max_attempts: int = MAX_ATTEMPTS,
-) -> tuple[DeskConfig, ValidationResult, int]:
-    """Génère une config via le LLM puis la fait valider par le moteur de contraintes.
-    En cas d'erreurs, réinjecte les erreurs au LLM pour correction (jusqu'à max_attempts).
+) -> tuple[DeskConfig, str, ValidationResult, int]:
+    """Génère une config + un message en langage naturel via le LLM, puis fait valider
+    la config par le moteur de contraintes. En cas d'erreurs, réinjecte les erreurs au
+    LLM pour correction (jusqu'à max_attempts). Le message final signale au client toute
+    partie de sa demande sans équivalent dans le catalogue.
     """
     catalogue = _load_catalogue()
     contraintes = _load_contraintes()
@@ -73,19 +76,20 @@ def generate_valid_config(
     system_prompt = build_system_prompt(catalogue, rag_results)
 
     correction_note: Optional[str] = None
-    config: Optional[DeskConfig] = None
+    generation: Optional[GenerationResult] = None
     result: Optional[ValidationResult] = None
     attempt = 0
 
     for attempt in range(1, max_attempts + 1):
-        config = _invoke_llm(system_prompt, history or [], current_config, message, correction_note)
-        result = validate_config(config.model_dump(), catalogue, contraintes)
+        generation = _invoke_llm(system_prompt, history or [], current_config, message, correction_note)
+        result = validate_config(generation.config.model_dump(), catalogue, contraintes)
 
         _log_attempt(
             {
                 "message": message,
                 "attempt": attempt,
-                "config": config.model_dump(),
+                "config": generation.config.model_dump(),
+                "llm_message": generation.message,
                 "valid": result.valid,
                 "errors": [asdict(e) for e in result.errors],
                 "warnings": [asdict(w) for w in result.warnings],
@@ -100,10 +104,10 @@ def generate_valid_config(
             "La configuration générée précédemment ne respecte pas ces règles de compatibilité :\n"
             f"{errors_text}\n"
             "Corrige uniquement les champs en conflit pour respecter ces règles, "
-            "en conservant les autres choix déjà faits."
+            "en conservant les autres choix déjà faits. Mets à jour le champ \"message\" en conséquence."
         )
 
-    return config, result, attempt
+    return generation.config, generation.message, result, attempt
 
 
 if __name__ == "__main__":
@@ -113,9 +117,10 @@ if __name__ == "__main__":
         "Je veux un bureau motorisé style scandinave, plateau bois clair, "
         "structure blanche, pour deux écrans"
     )
-    config, result, attempts = generate_valid_config(msg)
+    config, message, result, attempts = generate_valid_config(msg)
     print(f"Tentatives : {attempts}")
     print(f"Valide : {result.valid}")
     if result.errors:
         print("Erreurs restantes :", [e.message for e in result.errors])
+    print(f"Message : {message}")
     print(config.model_dump_json(indent=2))

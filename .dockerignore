@@ -1,0 +1,11 @@
+**/node_modules
+**/venv
+**/__pycache__
+*.pyc
+.git
+.gitignore
+backend/chroma_db
+backend/logs
+backend/.pytest_cache
+frontend/dist
+frontend/.vite

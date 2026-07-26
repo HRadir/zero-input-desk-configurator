@@ -67,6 +67,23 @@ npm run dev
 
 Ouvrir `http://localhost:5173`.
 
+## Lancer avec Docker (recommandé pour une démo rapide)
+
+Nécessite Docker Desktop (avec le daemon démarré) et le fichier `frontend/public/models/desk.glb` déjà présent (voir ci-dessus — Docker ne le télécharge pas).
+
+```powershell
+copy .env.example .env
+# éditer .env et renseigner OPENAI_API_KEY
+
+docker compose up --build
+```
+
+- Frontend : http://localhost:5173
+- Backend : http://localhost:8000
+- Au tout premier démarrage, le backend indexe automatiquement le catalogue dans ChromaDB (le volume `chroma_data` conserve l'index entre les redémarrages — pas besoin de relancer l'indexation manuellement).
+- Pour réindexer après une modification de `data/catalogue.json` : `docker compose down -v` puis `docker compose up --build` (supprime le volume ChromaDB pour forcer une réindexation).
+- Arrêter : `docker compose down` (conserve le volume) ou `docker compose down -v` (supprime aussi l'index ChromaDB).
+
 ## Tests
 
 ```powershell

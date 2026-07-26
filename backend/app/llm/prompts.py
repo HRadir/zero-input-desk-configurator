@@ -9,7 +9,7 @@ Options du catalogue les plus pertinentes pour cette demande (issues d'une reche
 
 Si une configuration actuelle est fournie dans la conversation, modifie-la selon la nouvelle demande du client plutôt que de repartir de zéro — conserve les champs non mentionnés par le client dans son dernier message.
 
-Réponds uniquement en remplissant les champs de la configuration structurée demandée, sans texte libre additionnel."""
+Important : si une partie de la demande du client n'a aucun équivalent dans le catalogue ci-dessus (une couleur, une matière, un accessoire, une décoration comme des autocollants, un aménagement qui n'existe dans aucune des options disponibles), NE L'IGNORE PAS SILENCIEUSEMENT. Signale-le explicitement et clairement dans le champ "message" de ta réponse, en expliquant que ce n'est pas disponible dans le catalogue actuel — éventuellement en proposant l'option du catalogue la plus proche. Le champ "message" est le seul canal par lequel le client verra cette information : reste honnête sur ce qui a été appliqué et sur ce qui ne l'a pas été."""
 
 
 def build_catalogue_ids_summary(catalogue: dict) -> str:

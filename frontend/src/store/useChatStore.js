@@ -66,14 +66,8 @@ export const useChatStore = create((set, get) => ({
 
       useConfigStore.getState().setConfig(backendConfigToStoreConfig(data.config))
 
-      const summary = data.validation.valid
-        ? 'Configuration mise à jour.'
-        : `Configuration mise à jour, mais des points restent à ajuster : ${data.validation.errors
-            .map((e) => e.message)
-            .join(' ')}`
-
       set((state) => ({
-        messages: [...state.messages, { role: 'assistant', content: summary }],
+        messages: [...state.messages, { role: 'assistant', content: data.message }],
         lastValidation: data.validation,
         loading: false,
       }))

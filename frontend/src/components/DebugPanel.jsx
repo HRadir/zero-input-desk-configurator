@@ -42,6 +42,7 @@ export default function DebugPanel() {
       <label>
         Plateau
         <select
+          data-testid="select-plateau"
           value={config.plateauId}
           onChange={(e) => {
             const newPlateau = data.plateaux.find((p) => p.id === e.target.value)
@@ -59,6 +60,7 @@ export default function DebugPanel() {
       <label>
         Largeur
         <select
+          data-testid="select-largeur"
           value={config.largeurChoisieCm}
           onChange={(e) => setConfig({ largeurChoisieCm: Number(e.target.value) })}
         >
