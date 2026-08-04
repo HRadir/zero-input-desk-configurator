@@ -33,3 +33,32 @@ Licence d'usage non précisée sur la fiche produit — à vérifier dans les co
 ## Emplacement du fichier
 
 `frontend/public/models/desk.glb` (14.3 Mo, format GLB binaire)
+
+---
+
+# Notes techniques — monitor.glb
+
+Source : Sketchfab, "PC Monitor 27 inch" par Annelida
+https://sketchfab.com/3d-models/pc-monitor-27-inch-06fb18eec19245d4811c4c3c8c7ea567
+
+**Licence : CC Attribution.** Usage commercial autorisé, mais attribution obligatoire à l'auteur "Annelida" — **à citer explicitement dans les remerciements/annexes du mémoire**.
+
+## Structure du fichier (inspectée via pygltflib)
+
+- **Nodes** : 7, hiérarchie propre (`Screen` → `Screen_Display_0`, `Main_low` → `Main_low_Base_0`)
+- **Meshes** : 2, chacun avec son propre matériau (`Display` pour l'écran, `Base` pour le pied/châssis) — contrairement au bureau, la géométrie est déjà séparée par partie
+- **Animations** : 0
+- **Triangles** : ~6 400 / **Vertices** : ~3 300
+- **Unités** : cotes réelles en mètres (bounding box mesuré : écran ~0,71m × 0,40m, ensemble avec pied ~0,72m × 0,51m × 0,18m) — contrairement à `desk.glb`, ce fichier respecte la convention glTF standard (1 unité = 1 mètre)
+
+## Intégration (Phase — ajout écrans à l'écran 3D)
+
+Le bureau (`desk.glb`) est en unités arbitraires non calibrées (cf. section précédente), alors que `monitor.glb` est en vraies unités métriques. Combiner les deux dans une seule scène Three.js sans ajustement ferait apparaître l'écran disproportionné (trop grand) par rapport au bureau. En l'absence d'une cote fiable pour le bureau, l'échelle et la position de l'écran (`MONITOR_SCALE`, `MONITOR_Y_OFFSET`, `MONITOR_Z_OFFSET` dans `DeskViewer.jsx`) sont **calées empiriquement par capture d'écran**, pas calculées à partir d'une conversion d'unités exacte — cohérent avec l'approche déjà retenue pour la largeur/profondeur du plateau.
+
+- Un écran est instancié par unité de `nombre_ecrans` (1 à 3), positionné le long de l'axe X du plateau, avec un espacement qui suit le facteur d'échelle de la largeur du bureau (`scaleX`) pour rester cohérent si le plateau change de largeur.
+- Le groupe des écrans partage la même translation verticale (assis/debout) que le bureau, pour bouger avec lui.
+- Au-delà de 3 écrans, la disposition n'est pas prévue (le catalogue plafonne `nombre_ecrans` à 3).
+
+## Emplacement du fichier
+
+`frontend/public/models/monitor.glb` (9,6 Mo, format GLB binaire)
