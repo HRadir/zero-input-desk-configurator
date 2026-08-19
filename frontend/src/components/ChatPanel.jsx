@@ -3,6 +3,12 @@ import { useChatStore } from '../store/useChatStore'
 import { useCatalogueStore } from '../store/useCatalogueStore'
 import { useConfigStore } from '../store/useConfigStore'
 
+const SUGGESTIONS = [
+  'Bureau scandinave, plateau bois clair, 2 écrans',
+  'Passe la finition en noir mat',
+  'Ajoute un support laptop',
+]
+
 function summarizeConfig(config, catalogue) {
   if (!catalogue) return ''
   const finition = catalogue.finitions.find((f) => f.id === config.finitionId)
@@ -28,9 +34,7 @@ export default function ChatPanel() {
   const messages = useChatStore((s) => s.messages)
   const loading = useChatStore((s) => s.loading)
   const lastValidation = useChatStore((s) => s.lastValidation)
-  const finalized = useChatStore((s) => s.finalized)
   const sendMessage = useChatStore((s) => s.sendMessage)
-  const finalize = useChatStore((s) => s.finalize)
 
   const config = useConfigStore((s) => s.config)
   const catalogue = useCatalogueStore((s) => s.data)
@@ -51,15 +55,24 @@ export default function ChatPanel() {
 
   return (
     <div className="chat-panel">
-      <h3>Configurateur conversationnel</h3>
+      <div className="chat-header">
+        <div className="chat-avatar">Z</div>
+        <div className="chat-header-text">
+          <span className="chat-title">Assistant Zero Input</span>
+          <span className="chat-subtitle">
+            <span className="status-dot" /> En ligne
+          </span>
+        </div>
+      </div>
 
       {catalogue && <div className="chat-summary">{summarizeConfig(config, catalogue)}</div>}
 
       <div className="chat-messages" ref={listRef}>
         {messages.length === 0 && (
-          <p className="chat-empty">
-            Décris le bureau que tu souhaites (style, matériaux, nombre d'écrans…).
-          </p>
+          <div className="chat-message chat-message-assistant">
+            Bonjour, je suis l'assistant Zero Input. Décrivez le bureau que vous souhaitez : style,
+            matériaux, nombre d'écrans…
+          </div>
         )}
         {messages.map((m, i) => (
           <div key={i} className={`chat-message chat-message-${m.role}`}>
@@ -88,29 +101,28 @@ export default function ChatPanel() {
         </div>
       )}
 
+      {messages.length === 0 && (
+        <div className="chat-suggestions">
+          {SUGGESTIONS.map((s) => (
+            <button key={s} type="button" className="suggestion-chip" onClick={() => sendMessage(s)}>
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+
       <form className="chat-input-row" onSubmit={handleSubmit}>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ex : bureau scandinave, plateau bois clair, 2 écrans"
+          placeholder="Décrivez le bureau que vous souhaitez…"
           disabled={loading}
         />
-        <button type="submit" disabled={loading || !input.trim()}>
-          Envoyer
+        <button type="submit" className="send-btn" disabled={loading || !input.trim()} aria-label="Envoyer">
+          ➤
         </button>
       </form>
-
-      <button type="button" className="chat-finalize" onClick={finalize} disabled={messages.length === 0}>
-        Valider la configuration
-      </button>
-
-      {finalized && (
-        <div className="chat-final-recap">
-          <strong>Configuration finale :</strong>
-          <p>{summarizeConfig(config, catalogue)}</p>
-        </div>
-      )}
     </div>
   )
 }

@@ -32,7 +32,6 @@ export const useChatStore = create((set, get) => ({
   loading: false,
   error: null,
   lastValidation: null, // { valid, errors, warnings } du dernier tour
-  finalized: false,
 
   sendMessage: async (text) => {
     const trimmed = text.trim()
@@ -83,6 +82,5 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  finalize: () => set({ finalized: true }),
-  reset: () => set({ messages: [], loading: false, error: null, lastValidation: null, finalized: false }),
+  reset: () => set({ messages: [], loading: false, error: null, lastValidation: null }),
 }))

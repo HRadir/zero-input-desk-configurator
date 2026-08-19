@@ -116,7 +116,7 @@ export default function DeskViewer() {
 
   return (
     <Canvas shadows camera={{ fov: 45, position: [3, 2.2, 4] }}>
-      <color attach="background" args={['#e9e9ec']} />
+      <color attach="background" args={['#f2efe8']} />
       <ambientLight intensity={0.7} />
       <directionalLight position={[3, 5, 2]} intensity={1.2} castShadow />
       <Suspense fallback={null}>
