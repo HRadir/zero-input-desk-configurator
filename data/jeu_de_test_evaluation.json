@@ -1,0 +1,154 @@
+{
+  "meta": {
+    "description": "Jeu de test pour l'évaluation RQ3 du configurateur conversationnel (bureau assis/debout)",
+    "date_validation": "2026-08-11",
+    "nombre_requetes": 16,
+    "note_methodologique": "Les cibles 'retrieval_pertinent' ne contiennent que des items réels du catalogue (finitions/plateaux/structures/accessoires), interrogeables par la recherche sémantique (axe 1). Les paramètres numériques du schéma DeskConfig (nombre_ecrans, largeur_choisie_cm...) ne sont jamais des cibles de retrieval : ils sont extraits directement par le LLM depuis la requête, pas récupérés depuis la base vectorielle. Ils sont notés séparément sous 'parametres_config_attendus' pour l'axe 2 (validité de la génération), pas pour l'axe 1.",
+    "axes_evalues": {
+      "axe_1": "Précision/rappel du retrieval (top-6 ChromaDB vs retrieval_pertinent annoté ci-dessous)",
+      "axe_2": "Validité de la configuration générée (validate_config, taux de succès, nb tentatives)",
+      "axe_3": "Alignement besoin exprimé / configuration produite (LLM-as-judge, +éventuelle évaluation humaine)"
+    }
+  },
+  "requetes_mono_tour": [
+    {
+      "id": 1,
+      "categorie": "simple_un_attribut",
+      "requete": "Je veux un bureau avec une finition chêne clair",
+      "retrieval_pertinent": ["finition_chene_clair"],
+      "ambiguite": "aucune"
+    },
+    {
+      "id": 2,
+      "categorie": "simple_un_attribut",
+      "requete": "Je voudrais un plateau large",
+      "retrieval_pertinent": ["plateau_large"],
+      "ambiguite": "aucune"
+    },
+    {
+      "id": 3,
+      "categorie": "simple_un_attribut",
+      "requete": "Un bureau avec une structure triple moteur, plus robuste",
+      "retrieval_pertinent": ["structure_triple_moteur"],
+      "ambiguite": "aucune"
+    },
+    {
+      "id": 4,
+      "categorie": "simple_un_attribut",
+      "requete": "Ajoute un passe-câble intégré à mon bureau",
+      "retrieval_pertinent": ["passe_cable"],
+      "ambiguite": "aucune"
+    },
+    {
+      "id": 5,
+      "categorie": "complexe_multi_attributs",
+      "requete": "Bureau blanc, motorisé, pour 2 écrans, largeur 160cm",
+      "retrieval_pertinent": ["finition_blanc"],
+      "parametres_config_attendus": {
+        "nombre_ecrans": 2,
+        "largeur_choisie_cm": 160
+      },
+      "ambiguite": "'motorisé' ne cible aucune structure précise (les deux structures sont motorisées) : exclu de la cible retrieval",
+      "note": "Requête susceptible de déclencher une correction (0 bras écran vs 2 écrans déclarés, cf. cas réel observé en développement) — à documenter tel quel, pas un défaut du jeu de test"
+    },
+    {
+      "id": 6,
+      "categorie": "complexe_multi_attributs",
+      "requete": "Un bureau compact, finition noire, avec un support pour ordinateur portable, structure double moteur",
+      "retrieval_pertinent": ["plateau_compact", "finition_noir_mat", "support_laptop", "structure_double_moteur"],
+      "ambiguite": "aucune",
+      "note": "Même remarque que #5 : susceptible de déclencher une correction sur le nombre de bras écran"
+    },
+    {
+      "id": 7,
+      "categorie": "ambigue_formulation_floue",
+      "requete": "Quelque chose de robuste et moderne pour un bureau lumineux",
+      "retrieval_pertinent_coeur": ["finition_blanc", "structure_triple_moteur"],
+      "retrieval_pertinent_peripherie": ["finition_chene_clair", "structure_double_moteur", "plateau_standard"],
+      "retrieval_a_exclure": ["finition_noir_mat", "plateau_large"],
+      "ambiguite": "'robuste' (charge max/type moteur), 'moderne' (tag style), 'lumineux' (couleur claire) admettent plusieurs lectures ; cœur = interprétation la plus directe, périphérie = acceptable mais discutable"
+    },
+    {
+      "id": 8,
+      "categorie": "ambigue_formulation_floue",
+      "requete": "Un bureau discret, dans les tons sombres, pour un usage intensif",
+      "retrieval_pertinent_coeur": ["finition_chene_fonce", "finition_noir_mat", "structure_triple_moteur"],
+      "retrieval_pertinent_peripherie": ["finition_gris"],
+      "retrieval_a_exclure": ["structure_double_moteur"],
+      "ambiguite": "'tons sombres' laisse une place discutable au gris anthracite ; 'usage intensif' lu comme charge max la plus élevée"
+    },
+    {
+      "id": 9,
+      "categorie": "hors_catalogue",
+      "requete": "Je veux une plaque commémorative gravée à mon nom sur le bureau",
+      "retrieval_pertinent": [],
+      "comportement_attendu": "champ 'message' doit signaler explicitement l'absence d'équivalent catalogue"
+    },
+    {
+      "id": 10,
+      "categorie": "hors_catalogue",
+      "requete": "Je veux un revêtement en cuir véritable sur le plateau",
+      "retrieval_pertinent": [],
+      "comportement_attendu": "champ 'message' doit signaler que seuls bois/stratifié existent"
+    },
+    {
+      "id": 11,
+      "categorie": "violation_contrainte",
+      "requete": "3 écrans sur une largeur de 120cm",
+      "retrieval_pertinent": [],
+      "regle_visee": "largeur_min_selon_ecrans",
+      "comportement_attendu": "violation probable à la génération initiale (seuil 3 écrans = 180cm) ; correction attendue en tentative suivante"
+    },
+    {
+      "id": 12,
+      "categorie": "violation_contrainte",
+      "requete": "Je veux un bureau très large, 200cm, avec une structure double moteur",
+      "retrieval_pertinent": ["structure_double_moteur", "plateau_large"],
+      "regles_visees": ["moteur_triple_requis_si_largeur", "structure_largeur_max_compatible"],
+      "comportement_attendu": "double violation potentielle simultanée ; teste si une seule tentative de correction suffit à résoudre les deux"
+    },
+    {
+      "id": 13,
+      "categorie": "violation_contrainte",
+      "requete": "Je veux un dock USB-C intégré, mais sans passe-câble",
+      "retrieval_pertinent": ["dock_usb", "passe_cable"],
+      "regle_visee": "dock_requiert_passe_cable",
+      "comportement_attendu": "conflit explicite et assumé dans la formulation ; observer si la correction ajoute le passe-câble ou retire le dock"
+    }
+  ],
+  "scenario_multi_tours": {
+    "id": "14-16",
+    "categorie": "multi_tours",
+    "description": "Un seul fil de conversation à 3 messages, testant la modification incrémentale via current_config",
+    "limitation_assumee": "échantillon multi-tours réduit à un seul scénario, faute de temps pour en tester davantage",
+    "tours": [
+      {
+        "id": 14,
+        "message": "Je veux un bureau simple, plateau standard, finition chêne clair",
+        "config_attendue_apres": {
+          "plateau_id": "plateau_standard",
+          "finition_id": "finition_chene_clair"
+        },
+        "teste": "configuration de base"
+      },
+      {
+        "id": 15,
+        "message": "Finalement mets 2 écrans",
+        "config_attendue_apres": {
+          "nombre_ecrans": 2
+        },
+        "regle_a_surveiller": "largeur_min_selon_ecrans (seuil 2 écrans = 140cm) — si la largeur reste au minimum (120cm), violation probable",
+        "teste": "modification incrémentale + correction potentielle combinée"
+      },
+      {
+        "id": 16,
+        "message": "Et passe la finition en chêne foncé",
+        "config_attendue_apres": {
+          "finition_id": "finition_chene_fonce"
+        },
+        "regle_a_surveiller": "finition_style_coherence (avertissement) — ne devrait PAS se déclencher car aucun style_demande explicite dans ce fil",
+        "teste": "deuxième modification incrémentale ; test négatif du déclenchement conditionnel de l'avertissement de style"
+      }
+    ]
+  }
+}

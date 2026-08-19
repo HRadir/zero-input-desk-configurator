@@ -5,6 +5,10 @@ backend/__pycache__/
 *.pyc
 backend/chroma_db/
 backend/logs/
+evaluation/eval_log.jsonl
+evaluation/eval_log_repeated.jsonl
+evaluation/judge_log_repeated.jsonl
+evaluation/judge_log.jsonl
 .env
 
 # Node / frontend
