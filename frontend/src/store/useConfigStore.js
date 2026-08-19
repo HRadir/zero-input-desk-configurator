@@ -6,7 +6,7 @@ const defaultConfig = {
   largeurChoisieCm: 140,
   structureId: 'structure_double_moteur',
   nombreEcrans: 1,
-  accessoires: [],
+  accessoires: ['bras_ecran_simple'],
   styleDemande: null,
 }
 

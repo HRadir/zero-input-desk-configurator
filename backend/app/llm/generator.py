@@ -124,3 +124,4 @@ if __name__ == "__main__":
         print("Erreurs restantes :", [e.message for e in result.errors])
     print(f"Message : {message}")
     print(config.model_dump_json(indent=2))
+
